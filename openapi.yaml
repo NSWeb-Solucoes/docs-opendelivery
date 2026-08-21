@@ -1,0 +1,3209 @@
+openapi: 3.0.0
+info:
+  title: openapi
+  version: 1.0.0
+paths:
+  /oauth/token:
+    post:
+      summary: Get Access Token
+      operationId: users_macuser_work_open_delivery_api_authentication_get_access_token_yml
+      description: >-
+        Requests new access token for accessing **Ordering Application** API
+        resources.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - authentication
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+              example:
+                access_token: >-
+                  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NhcmRhcGlvLnBlZGl6YXAuY29tLmJyIiwiYXVkIjoiaHR0cHM6Ly9jYXJkYXBpby5wZWRpemFwLmNvbS5iciIsImp0aSI6IjY2ZGFlNWI1YTZhYzhjYzJkZTFiM2ViMmQ3YmY5MjdhIiwiaWF0IjoxNzg0MjI1MzQ4LjU5NDE2NywibmJmIjoxNzg0MjI1MzQ4LjU5NDE2NywiZXhwIjoxNzg0MjQ2OTQ4LjU5NDE2Nywic2NvcGUiOiJ3cy5hbGwiLCJ0eXAiOiJ3c19jbGllbnQiLCJjbGllbnRfaWQiOiI0YTk0ODM2Ny02ZWIwLTQwZGQtYWJmOS03YTI4Y2ZkNjBiOGEifQ.UNVBuw-AqyE5HQ2cz9sMhWUmKxst11rzsdrYameRkVg
+                token_type: bearer
+                expires_in: 21600
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: grant_type invalido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Credenciais invalidas
+                status: 401
+      requestBody:
+        $ref: '#/components/requestBodies/get_access_token'
+  /v1/events/acknowledgment:
+    post:
+      summary: Acknowledge Events
+      operationId: users_macuser_work_open_delivery_api_events_acknowledge_events_yml
+      description: >-
+        Acknowledge a set of events, dismissing them from future polling calls.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - events
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Payload inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+      requestBody:
+        $ref: '#/components/requestBodies/acknowledge_events'
+      security:
+        - acknowledge_events: []
+  /v1/events:
+    get:
+      summary: Get New Events
+      operationId: users_macuser_work_open_delivery_api_events_get_new_events_yml
+      description: >-
+        Polls events for any orders from merchants associated with the
+        authenticated user.  
+
+        Each event received from this endpoint must be properly acknowledged,
+        otherwise it will continue to be returned on further requests.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionGETSS_OA.png" />
+        </div>
+      tags:
+        - events
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    eventId:
+                      type: string
+                    eventType:
+                      type: string
+                    orderId:
+                      type: string
+                    orderURL:
+                      type: string
+                    createdAt:
+                      type: string
+                    sourceAppId:
+                      type: string
+                    virtualBrand:
+                      type: string
+              example:
+                - eventId: ad0fcc48-abba-4491-a017-94f5a145c281
+                  eventType: CREATED
+                  orderId: a9c93a8c-1b16-4960-b2f6-908aff3d3f2d
+                  orderURL: >-
+                    https://cardapio.pedizap.com.br/opendelivery/v1/orders/a9c93a8c-1b16-4960-b2f6-908aff3d3f2d
+                  createdAt: '2026-07-16T15:22:02.000Z'
+                  sourceAppId: 123e4567-e89b-412d-a456-426614174000
+                  virtualBrand: pedizap-5095
+                - eventId: 88f0597a-87a0-41c8-810d-5efbe2acd198
+                  eventType: CREATED
+                  orderId: 6cc158a0-115b-4ed7-8c50-68971825d29e
+                  orderURL: >-
+                    https://cardapio.pedizap.com.br/opendelivery/v1/orders/6cc158a0-115b-4ed7-8c50-68971825d29e
+                  createdAt: '2026-07-16T15:23:13.000Z'
+                  sourceAppId: 123e4567-e89b-412d-a456-426614174000
+                  virtualBrand: pedizap-5095
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+      parameters:
+        - name: eventType
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: string
+            enum:
+              - CREATED
+              - CONFIRMED
+              - PREPARATION_REQUESTED
+              - PREPARING
+              - DISPATCHED
+              - READY_FOR_PICKUP
+              - PICKUP_AREA_ASSIGNED
+              - PICKED_UP
+              - DELIVERED
+              - CONCLUDED
+              - CANCELLATION_REQUESTED
+              - CANCELLATION_REQUEST_DENIED
+              - CANCELLED
+              - ORDER_CANCELLATION_REQUEST
+              - CANCELLED_DENIED
+        - name: x-polling-merchants
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: 22815773000169-dbc7e35a-c936-4665-9e13-eb55eb8b6824
+      security:
+        - get_new_events: []
+  /v1/merchantStatus?merchantId=:{merchant_id}:
+    get:
+      summary: Check Merchant Update Processing Result
+      operationId: >-
+        users_macuser_work_open_delivery_api_merchant_check_merchant_update_processing_result_yml
+      description: >-
+        Returns the result of the merchant update processing, whether triggered
+        by a direct GET /merchant request or by receiving a merchant update via
+        webhook.
+
+
+        Use this endpoint to verify the status and outcome of the last merchant
+        update attempt, including success, failure, or processing state.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionGETSS_OA.png" />
+        </div>
+      tags:
+        - merchant
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lastRead:
+                    type: string
+                  status:
+                    type: string
+                  moreInfo:
+                    type: string
+              example:
+                lastRead: '2026-07-16T11:01:59.000Z'
+                status: SUCCESS
+                moreInfo: ''
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Merchant não encontrado
+                status: 404
+      parameters:
+        - name: merchantId
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{merchant_id}}'
+        - name: merchant_id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      security:
+        - check_merchant_update_processing_result: []
+  /v1/merchant/:id/status:
+    get:
+      summary: Get Merchant Status and Service Hours
+      operationId: >-
+        users_macuser_work_open_delivery_api_merchant_get_merchant_status_and_service_hours_yml
+      description: >-
+        Returns the merchant status, service hours (serviceHours), and
+        sourceAppId.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **SOFTWARE SERVICE**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/versions/rc/images/directionGETSS_OA.png" />
+        </div>
+      tags:
+        - merchant
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  services:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        serviceType:
+                          type: string
+                        serviceHours:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              weekHours:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    dayOfWeek:
+                                      type: array
+                                      items:
+                                        type: string
+                                    timePeriods:
+                                      type: object
+                                      properties:
+                                        startTime:
+                                          type: string
+                                        endTime:
+                                          type: string
+                              holidayHours:
+                                type: array
+                                items:
+                                  type: string
+                  orderingAppMerchantId:
+                    type: string
+              example:
+                status: AVAILABLE
+                services:
+                  - id: service-16
+                    serviceType: DELIVERY
+                    serviceHours:
+                      - weekHours:
+                          - dayOfWeek:
+                              - SUNDAY
+                              - MONDAY
+                              - TUESDAY
+                              - WEDNESDAY
+                              - THURSDAY
+                              - FRIDAY
+                              - SATURDAY
+                            timePeriods:
+                              startTime: 00:00:00.000Z
+                              endTime: 23:59:00.000Z
+                        holidayHours: []
+                  - id: service-31
+                    serviceType: DELIVERY
+                    serviceHours:
+                      - weekHours:
+                          - dayOfWeek:
+                              - SUNDAY
+                              - MONDAY
+                              - TUESDAY
+                              - WEDNESDAY
+                              - THURSDAY
+                              - FRIDAY
+                              - SATURDAY
+                            timePeriods:
+                              startTime: 00:00:00.000Z
+                              endTime: 23:59:00.000Z
+                        holidayHours: []
+                  - id: service-32
+                    serviceType: DELIVERY
+                    serviceHours:
+                      - weekHours:
+                          - dayOfWeek:
+                              - SUNDAY
+                              - MONDAY
+                              - TUESDAY
+                              - WEDNESDAY
+                              - THURSDAY
+                              - FRIDAY
+                              - SATURDAY
+                            timePeriods:
+                              startTime: 00:00:00.000Z
+                              endTime: 23:59:00.000Z
+                        holidayHours: []
+                orderingAppMerchantId: 123e4567-e89b-412d-a456-426614174000
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Merchant não encontrado
+                status: 404
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{merchant_id}}'
+      security:
+        - get_merchant_status_and_service_hours: []
+  /v1/merchant:
+    get:
+      summary: Get Merchant
+      operationId: users_macuser_work_open_delivery_api_merchant_get_merchant_yml
+      description: >-
+        Returns the full **Merchant** object (basic info, services and catalog:
+        items, menus, categories, item offers and availabilities) registered in
+        the **Ordering Application**.
+
+
+        Called by the **Software Service** using the URL registered via [PUT
+        /v1/merchantOnboarding](#operation/register_update_merchant_endpoint_info)
+        (`getMerchantURL.baseURL`), authenticating with the `apiKey` sent in
+        that same registration (header `X-API-KEY`).
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionGETSS_OA.png" />
+        </div>
+      tags:
+        - merchant
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lastUpdate:
+                    type: string
+                  TTL:
+                    type: integer
+                  id:
+                    type: string
+                  status:
+                    type: string
+                  basicInfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      contactEmails:
+                        type: array
+                        items:
+                          type: string
+                      contactPhones:
+                        type: object
+                        properties:
+                          commercialNumber:
+                            type: string
+                  services:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        status:
+                          type: string
+                        serviceType:
+                          type: string
+                        menuId:
+                          type: string
+                        serviceHours:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            weekHours:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  dayOfWeek:
+                                    type: array
+                                    items:
+                                      type: string
+                                  timePeriods:
+                                    type: object
+                                    properties:
+                                      startTime:
+                                        type: string
+                                      endTime:
+                                        type: string
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        externalCode:
+                          type: string
+                        image:
+                          type: object
+                          properties:
+                            URL:
+                              type: string
+                        unit:
+                          type: string
+                  menus:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        externalCode:
+                          type: string
+                        categoryId:
+                          type: array
+                          items:
+                            type: string
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        index:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        externalCode:
+                          type: string
+                        status:
+                          type: string
+                        availabilityId:
+                          type: array
+                          items:
+                            type: string
+                        itemOfferId:
+                          type: array
+                          items:
+                            type: string
+                  itemOffers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        itemId:
+                          type: string
+                        index:
+                          type: integer
+                        price:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                            originalValue:
+                              type: integer
+                            currency:
+                              type: string
+                        availabilityId:
+                          type: array
+                          items:
+                            type: string
+                        optionGroupsId:
+                          type: array
+                          items:
+                            type: string
+                  optionGroups:
+                    type: array
+                    items:
+                      type: string
+                  availabilities:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        hours:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              dayOfWeek:
+                                type: array
+                                items:
+                                  type: string
+                              timePeriods:
+                                type: object
+                                properties:
+                                  startTime:
+                                    type: string
+                                  endTime:
+                                    type: string
+              example:
+                lastUpdate: '2026-07-17T12:00:00.000Z'
+                TTL: 500
+                id: 123e4567-e89b-412d-a456-426614174000
+                status: AVAILABLE
+                basicInfo:
+                  name: Cardapio
+                  contactEmails:
+                    - contato@cardapio.com.br
+                  contactPhones:
+                    commercialNumber: '14991618018'
+                services:
+                  - id: service-16
+                    status: AVAILABLE
+                    serviceType: DELIVERY
+                    menuId: menu-106
+                    serviceHours:
+                      id: sh-16
+                      weekHours:
+                        - dayOfWeek:
+                            - SUNDAY
+                            - MONDAY
+                            - TUESDAY
+                            - WEDNESDAY
+                            - THURSDAY
+                            - FRIDAY
+                            - SATURDAY
+                          timePeriods:
+                            startTime: 00:00:00.000Z
+                            endTime: 23:59:00.000Z
+                items:
+                  - id: '17'
+                    name: Picole de Creme
+                    description: ''
+                    externalCode: prod-000017
+                    image:
+                      URL: https://cardapio.pedizap.com.br/uploads/product/17.jpg
+                    unit: UN
+                menus:
+                  - id: menu-106
+                    name: Cardapio
+                    description: ''
+                    externalCode: '106'
+                    categoryId:
+                      - '5'
+                categories:
+                  - id: '5'
+                    index: 0
+                    name: Sorvetes
+                    description: ''
+                    externalCode: '5'
+                    status: AVAILABLE
+                    availabilityId:
+                      - avail-106
+                    itemOfferId:
+                      - offer-17
+                itemOffers:
+                  - id: offer-17
+                    itemId: '17'
+                    index: 0
+                    price:
+                      value: 6
+                      originalValue: 6
+                      currency: BRL
+                    availabilityId:
+                      - avail-106
+                    optionGroupsId: []
+                optionGroups: []
+                availabilities:
+                  - id: avail-106
+                    hours:
+                      - dayOfWeek:
+                          - SUNDAY
+                          - MONDAY
+                          - TUESDAY
+                          - WEDNESDAY
+                          - THURSDAY
+                          - FRIDAY
+                          - SATURDAY
+                        timePeriods:
+                          startTime: 00:00:00.000Z
+                          endTime: 23:59:00.000Z
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Invalid apiKey
+                status: 403
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{apiKey}}'
+  /v1/merchantUpdate?merchantId=:{merchant_id}:
+    post:
+      summary: Merchant Update Webhook
+      operationId: >-
+        users_macuser_work_open_delivery_api_merchant_merchant_update_webhook_yml
+      description: >-
+        Notifies the **Ordering Application** that merchant data changed on the
+        **Software Service** side (full merchant refresh, entity-scoped catalog
+        update, or merchantStatus change), so it can be synced.
+
+
+        > When `entityType` is omitted (or is `MERCHANT`), the **Ordering
+        Application** re-fetches the merchant via [GET
+        /v1/merchant](#operation/users_macuser_work_open_delivery_api_merchant_get_merchant_yml).
+        When `entityType` is present, only the `updatedObjects` for that entity
+        are applied.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - merchant
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Payload inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Merchant não encontrado
+                status: 404
+      parameters:
+        - name: merchantId
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{merchant_id}}'
+        - name: merchant_id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/merchant_update_webhook'
+      security:
+        - merchant_update_webhook: []
+  /v1/merchantOnboarding?merchantId=:{merchant_id}:
+    put:
+      summary: Register / Update Merchant endpoint info.
+      operationId: >-
+        users_macuser_work_open_delivery_api_merchant_register_-_update_merchant_endpoint_info_yml
+      description: >-
+        Register and update the **Merchant** endpoint [GET
+        /v1/merchant](#operation/getMerchant) information in the **Ordering
+        Application**.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPUTSS_OA.png" />
+        </div>
+      tags:
+        - merchant
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Payload inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+      parameters:
+        - name: merchantId
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{merchant_id}}'
+        - name: merchant_id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/register_update_merchant_endpoint_info'
+      security:
+        - register_update_merchant_endpoint_info: []
+  /v1/orders/:orderId/acceptCancellation:
+    post:
+      summary: Accept order cancellation
+      operationId: >-
+        users_macuser_work_open_delivery_api_orders_accept_order_cancellation_yml
+      description: >-
+        Informs the **Ordering Application** that the cancellation request has
+        been accepted and the order can be Cancelled.
+
+
+        > It is expected to receive a `CANCELLED` event after this action.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/versions/rc/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido já cancelado
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      security:
+        - accept_order_cancellation: []
+  /v1/orders/:orderId/confirm:
+    post:
+      summary: Confirm
+      operationId: users_macuser_work_open_delivery_api_orders_confirm_yml
+      description: >-
+        Informs the **Ordering Application** that the order has been accpeted
+        and preparation will start soon.
+
+
+        > It is expected to receive a `CONFIRMED` event after this action.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Payload inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido já confirmado ou em processamento
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      requestBody:
+        $ref: '#/components/requestBodies/confirm'
+      security:
+        - confirm: []
+  /v1/orders/:orderId/delivered:
+    post:
+      summary: Delivered (Optional)
+      operationId: users_macuser_work_open_delivery_api_orders_delivered_optional_yml
+      description: >-
+        Informs the **Ordering Application** that the order has been delivered.
+
+
+        > It is expected to receive a `DELIVERED` event after this action.
+
+
+        Important: This endpoint is not mandatory and should be sent only if the
+        **Ordering Application** is able to receive this request and only in
+        cases where the order logistics service is provided by the Merchant and
+        not the Marketplace.
+
+
+        > To check whether or not it is required to call this endpoint, check
+        the `sendDelivered` field in the endpoint: [GET
+        /orders/{orderId}](#operation/ordersDetails)
+
+
+        <br /><br />
+
+        <span style='text-decoration:underline; color:#26323880;
+        font-size:13.006px'>HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido já foi entregue
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      security:
+        - delivered_optional: []
+  /v1/orders/:orderId/denyCancellation:
+    post:
+      summary: Deny order cancellation
+      operationId: users_macuser_work_open_delivery_api_orders_deny_order_cancellation_yml
+      description: >-
+        Informs the **Ordering Application** that the cancellation request has
+        been denied and the order cannot be Cancelled.
+
+
+        > It is expected to receive a `CANCELLATION_DENIED` event after this
+        action.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style='text-decoration:underline; color:#26323880;
+        font-size:13.006px'>DIRECTION:</span>
+
+        <div align='center'>
+          <img src='https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png' />
+        </div>
+      tags:
+        - orders
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Nenhuma solicitação de cancelamento pendente
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      requestBody:
+        $ref: '#/components/requestBodies/deny_order_cancellation'
+      security:
+        - deny_order_cancellation: []
+  /v1/orders/:orderId/dispatch:
+    post:
+      summary: Dispatch
+      operationId: users_macuser_work_open_delivery_api_orders_dispatch_yml
+      description: >-
+        Informs the **Ordering Application** that the order has been dispatched.
+
+
+        > It is expected to receive a `DISPATCHED` event after this action.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido já foi despachado
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      requestBody:
+        $ref: '#/components/requestBodies/dispatch'
+      security:
+        - dispatch: []
+  /v1/orders/:orderId:
+    get:
+      summary: Get Order Details
+      operationId: users_macuser_work_open_delivery_api_orders_get_order_details_yml
+      description: >-
+        Endpoint to consult the details of an order.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionGETSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  displayId:
+                    type: string
+                  sourceAppId:
+                    type: string
+                  category:
+                    type: string
+                  createdAt:
+                    type: string
+                  lastEvent:
+                    type: string
+                  orderTiming:
+                    type: string
+                  preparationStartDateTime:
+                    type: string
+                  merchant:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        index:
+                          type: integer
+                        name:
+                          type: string
+                        externalCode:
+                          type: string
+                        unit:
+                          type: string
+                        quantity:
+                          type: integer
+                        unitPrice:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                            currency:
+                              type: string
+                        originalPrice:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                            currency:
+                              type: string
+                        optionsPrice:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                            currency:
+                              type: string
+                        subtotalPrice:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                            currency:
+                              type: string
+                        totalPrice:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                            currency:
+                              type: string
+                        specialInstructions:
+                          type: string
+                        options:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              index:
+                                type: integer
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              externalCode:
+                                type: string
+                              unit:
+                                type: string
+                              quantity:
+                                type: integer
+                              unitPrice:
+                                type: object
+                                properties:
+                                  value:
+                                    type: integer
+                                  currency:
+                                    type: string
+                              originalPrice:
+                                type: object
+                                properties:
+                                  value:
+                                    type: integer
+                                  currency:
+                                    type: string
+                              subtotalPrice:
+                                type: object
+                                properties:
+                                  value:
+                                    type: integer
+                                  currency:
+                                    type: string
+                              totalPrice:
+                                type: object
+                                properties:
+                                  value:
+                                    type: integer
+                                  currency:
+                                    type: string
+                  otherFees:
+                    type: array
+                    items:
+                      type: string
+                  discounts:
+                    type: array
+                    items:
+                      type: string
+                  total:
+                    type: object
+                    properties:
+                      itemsPrice:
+                        type: object
+                        properties:
+                          value:
+                            type: integer
+                          currency:
+                            type: string
+                      otherFees:
+                        type: object
+                        properties:
+                          value:
+                            type: integer
+                          currency:
+                            type: string
+                      discount:
+                        type: object
+                        properties:
+                          value:
+                            type: integer
+                          currency:
+                            type: string
+                      orderAmount:
+                        type: object
+                        properties:
+                          value:
+                            type: integer
+                          currency:
+                            type: string
+                  payments:
+                    type: object
+                    properties:
+                      prepaid:
+                        type: integer
+                      pending:
+                        type: integer
+                      methods:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                            currency:
+                              type: string
+                            type:
+                              type: string
+                            method:
+                              type: string
+                            changeFor:
+                              type: integer
+                            brand:
+                              type: string
+                  taxInvoice:
+                    type: object
+                    properties:
+                      issued:
+                        type: boolean
+                  customer:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      documentNumber:
+                        type: string
+                      phone:
+                        type: object
+                        properties:
+                          number:
+                            type: string
+                      email:
+                        type: string
+                      ordersCountOnMerchant:
+                        type: integer
+                  sendPreparing:
+                    type: boolean
+                  sendDelivered:
+                    type: boolean
+                  sendPickedUp:
+                    type: boolean
+                  sendTracking:
+                    type: boolean
+                  delivery:
+                    type: object
+                    properties:
+                      deliveredBy:
+                        type: string
+                      deliveryAddress:
+                        type: object
+                        properties:
+                          country:
+                            type: string
+                          state:
+                            type: string
+                          city:
+                            type: string
+                          district:
+                            type: string
+                          street:
+                            type: string
+                          number:
+                            type: string
+                          complement:
+                            type: string
+                          reference:
+                            type: string
+                          postalCode:
+                            type: string
+                          coordinates:
+                            type: object
+                            properties:
+                              latitude:
+                                type: number
+                              longitude:
+                                type: number
+                          formattedAddress:
+                            type: string
+                      estimatedDeliveryDateTime:
+                        type: string
+              example:
+                id: 6cc158a0-115b-4ed7-8c50-68971825d29e
+                type: DELIVERY
+                displayId: '2733'
+                sourceAppId: 123e4567-e89b-412d-a456-426614174000
+                category: FOOD
+                createdAt: '2026-07-16T15:23:13.000Z'
+                lastEvent: CREATED
+                orderTiming: INSTANT
+                preparationStartDateTime: '2026-07-16T15:23:13.000Z'
+                merchant:
+                  id: 123e4567-e89b-412d-a456-426614174000
+                  name: Cardapio
+                items:
+                  - id: 2253a6cd-b7da-41bb-a194-58b2607e5b70
+                    index: 0
+                    name: Picolé de Creme
+                    externalCode: prod-000017
+                    unit: UN
+                    quantity: 1
+                    unitPrice:
+                      value: 6
+                      currency: BRL
+                    originalPrice:
+                      value: 6
+                      currency: BRL
+                    optionsPrice:
+                      value: 13
+                      currency: BRL
+                    subtotalPrice:
+                      value: 6
+                      currency: BRL
+                    totalPrice:
+                      value: 19
+                      currency: BRL
+                    specialInstructions: ''
+                    options:
+                      - index: 0
+                        id: 6243475b-7dac-4321-aaba-afbf34c5c198
+                        name: Chocolate
+                        externalCode: '3494'
+                        unit: UN
+                        quantity: 1
+                        unitPrice:
+                          value: 13
+                          currency: BRL
+                        originalPrice:
+                          value: 13
+                          currency: BRL
+                        subtotalPrice:
+                          value: 13
+                          currency: BRL
+                        totalPrice:
+                          value: 13
+                          currency: BRL
+                otherFees: []
+                discounts: []
+                total:
+                  itemsPrice:
+                    value: 19
+                    currency: BRL
+                  otherFees:
+                    value: 0
+                    currency: BRL
+                  discount:
+                    value: 0
+                    currency: BRL
+                  orderAmount:
+                    value: 19
+                    currency: BRL
+                payments:
+                  prepaid: 0
+                  pending: 19
+                  methods:
+                    - value: 19
+                      currency: BRL
+                      type: PENDING
+                      method: CREDIT
+                      changeFor: 0
+                      brand: VISA
+                taxInvoice:
+                  issued: false
+                customer:
+                  id: c6004900-8553-4c67-bb7b-947c68543021
+                  name: ''
+                  documentNumber: ''
+                  phone:
+                    number: '14991618018'
+                  email: ''
+                  ordersCountOnMerchant: 0
+                sendPreparing: false
+                sendDelivered: true
+                sendPickedUp: false
+                sendTracking: true
+                delivery:
+                  deliveredBy: MERCHANT
+                  deliveryAddress:
+                    country: BR
+                    state: BR-SP
+                    city: Bauru
+                    district: Higienópolis
+                    street: Rua Rodrigo Romeiro
+                    number: '550'
+                    complement: ''
+                    reference: ''
+                    postalCode: '17013034'
+                    coordinates:
+                      latitude: -22.32523698174861
+                      longitude: -49.06325697898865
+                    formattedAddress: Rua Rodrigo Romeiro, 550 - Higienópolis - Bauru, BR-SP
+                  estimatedDeliveryDateTime: '2026-07-16T17:33:13.000Z'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      security:
+        - get_order_details: []
+    patch:
+      summary: Patch Order Details
+      operationId: users_macuser_work_open_delivery_api_orders_patch_order_details_yml
+      description: >-
+        Updates order details -- currently the preparation start date/time
+        estimated by the **Ordering Application**.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: preparationStartDateTime obrigatório
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      requestBody:
+        $ref: '#/components/requestBodies/patch_order_details'
+      security:
+        - patch_order_details: []
+  /v1/orders/:orderId/pickedUp:
+    post:
+      summary: Picked Up (Optional)
+      operationId: users_macuser_work_open_delivery_api_orders_picked_up_optional_yml
+      description: >-
+        Informs the **Ordering Application** that the order has been picked up.
+
+
+        > It is expected to receive a `PICKED_UP` event after this action.
+
+
+        Important: This endpoint is not mandatory and should be sent only if the
+        **Ordering Application** is able to receive this request and when the
+        Order `service.serviceType` = `TAKEOUT`.
+
+
+        > To check whether or not it is required to call this endpoint, check
+        the `sendPickedUp` field in the endpoint: [GET
+        /orders/{orderId}](#operation/ordersDetails)
+
+
+        <br /><br />
+
+        <span style='text-decoration:underline; color:#26323880;
+        font-size:13.006px'>HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido já marcado como retirado
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      security:
+        - picked_up_optional: []
+  /v1/orders/:orderId/preparing:
+    post:
+      summary: Preparing (Optional)
+      operationId: users_macuser_work_open_delivery_api_orders_preparing_optional_yml
+      description: >-
+        Informs the **Ordering Application** that the preparation of the order
+        has already begun.
+
+
+        > It is expected to receive a `PREPARING` event after this action.
+
+
+        Important: This endpoint is not mandatory and should be sent only if the
+        **Ordering Application** is able to receive this request and when the
+        Order `service.serviceType` = `TAKEOUT`.
+
+
+        > To check whether or not it is required to call this endpoint, check
+        the `sendPreparing` field in the endpoint: [GET
+        /orders/{orderId}](#operation/ordersDetails)
+
+
+        <br /><br />
+
+        <span style='text-decoration:underline; color:#26323880;
+        font-size:13.006px'>HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido já está em preparo
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      security:
+        - preparing_optional: []
+  /v1/orders/:orderId/readyForPickup:
+    post:
+      summary: Ready For Pickup
+      operationId: users_macuser_work_open_delivery_api_orders_ready_for_pickup_yml
+      description: >-
+        Informs the **Ordering Application** that the order is ready for pickup.
+
+
+        > It is expected to receive a `READY_FOR_PICKUP` event after this
+        action.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido já marcado como pronto para retirada
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      security:
+        - ready_for_pickup: []
+  /v1/orders/:orderId/requestCancellation:
+    post:
+      summary: Request order cancellation
+      operationId: >-
+        users_macuser_work_open_delivery_api_orders_request_order_cancellation_yml
+      description: >-
+        Request order cancellation to the **Ordering Application**.
+
+
+        > It is expected to receive a `CANCELLATION_REQUESTED` event after this
+        action.
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style='text-decoration:underline; color:#26323880;
+        font-size:13.006px'>DIRECTION:</span>
+
+        <div align='center'>
+          <img src='https://abrasel-nacional.github.io/opendelivery/versions/rc/images/directionPOSTSS_OA.png' />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: orderId inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Cancelamento já solicitado
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      requestBody:
+        $ref: '#/components/requestBodies/request_order_cancellation'
+      security:
+        - request_order_cancellation: []
+  /v1/orders/:orderId/tracking:
+    post:
+      summary: Tracking
+      operationId: users_macuser_work_open_delivery_api_orders_tracking_yml
+      description: >-
+        Sends delivery tracking information updates for the order while it is
+        out for delivery.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Payload inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não disponível nesta integração
+                status: 422
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+      requestBody:
+        $ref: '#/components/requestBodies/tracking'
+      security:
+        - tracking: []
+  /v1/orders/:orderId/validateCode/:deliveryCode:
+    post:
+      summary: Validate Delivery Code
+      operationId: users_macuser_work_open_delivery_api_orders_validate_delivery_code_yml
+      description: >-
+        Validates the delivery confirmation code informed by the courier against
+        the order.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+        </div>
+      tags:
+        - orders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: string
+                  deliveryCode:
+                    type: string
+              example:
+                orderId: 6cc158a0-115b-4ed7-8c50-68971825d29e
+                deliveryCode: '1234'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Código de entrega inválido
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado
+                status: 404
+      parameters:
+        - name: orderId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: '{{order_id}}'
+        - name: deliveryCode
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int32
+          example: '1234'
+      security:
+        - validate_delivery_code: []
+  /v1/confirmationCode:
+    post:
+      summary: Delivery Code Webhook
+      operationId: users_macuser_work_open_delivery_api_webhook_delivery_code_webhook_yml
+      description: >-
+        Sent by the **Logistic Service** to notify this **Software Service** of
+        the delivery confirmation code informed by the customer, so it can be
+        validated against the order.
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **SOFTWARE SERVICE**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTOA_SS.png" />
+        </div>
+      tags:
+        - webhook
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  title:
+                    type: string
+              example:
+                status: '200'
+                title: Codigo de confirmacao processado com sucesso
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Código de confirmação inválido.
+                status: 400
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Invalid signature
+                status: 403
+      parameters:
+        - name: X-App-Id
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: X-App-MerchantId
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: X-App-Signature
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/delivery_code_webhook'
+  /v1/newEvent:
+    post:
+      summary: New Order Event Notification (Webhook)
+      operationId: >-
+        users_macuser_work_open_delivery_api_webhook_new_order_event_notification_webhook_yml
+      description: >-
+        Webhook alternative to [GET
+        /v1/events](#operation/users_macuser_work_open_delivery_api_orders_events_get_new_events_yml)
+        polling: sent by the **Ordering Application** to notify this **Software
+        Service** that a new order event has happened, avoiding the need to
+        poll.
+
+
+        > **Acknowledgment does NOT apply for webhooks.**
+
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **SOFTWARE SERVICE**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTOA_SS.png" />
+        </div>
+      tags:
+        - webhook
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  title:
+                    type: string
+              example:
+                status: '200'
+                title: Evento processado com sucesso
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Evento sem orderId.
+                status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Unauthorized
+                status: 401
+      parameters:
+        - name: X-App-Id
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: X-App-MerchantId
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: X-App-Signature
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/new_order_event_notification_webhook'
+  /v1/newLogisticEvent:
+    post:
+      summary: Tracking Event Webhook
+      operationId: users_macuser_work_open_delivery_api_webhook_tracking_event_webhook_yml
+      description: >-
+        Sent by the **Logistic Service** to notify this **Software Service**
+        that a new delivery/logistics event has happened for the order (vehicle
+        assigned, picked up, arrived at customer, etc.).
+
+        <br /><br />
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">HOST:</span> **SOFTWARE SERVICE**
+
+
+        <span style="text-decoration:underline; color:#26323880;
+        font-size:13.006px">DIRECTION:</span>
+
+        <div align="center">
+          <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTOA_SS.png" />
+        </div>
+      tags:
+        - webhook
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  title:
+                    type: string
+              example:
+                status: '200'
+                title: Evento processado com sucesso
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Pedido não encontrado.
+                status: 400
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+              example:
+                title: Invalid signature
+                status: 403
+      parameters:
+        - name: X-App-Id
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: X-App-MerchantId
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: X-App-Signature
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/tracking_event_webhook'
+servers:
+  - url: https://domain.pedizap.com.br/opendelivery
+    description: Base Server
+  - url: https://domain.pedizap.develop/opendelivery
+    description: Open Delivery - Development
+  - url: https://domain.pedizap.com.br/opendelivery
+    description: Open Delivery - Production
+components:
+  schemas:
+    get_access_token:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        grant_type:
+          type: string
+    acknowledge_events:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          orderId:
+            type: string
+          eventType:
+            type: string
+      example:
+        - id: ad0fcc48-abba-4491-a017-94f5a145c281
+          orderId: a9c93a8c-1b16-4960-b2f6-908aff3d3f2d
+          eventType: CREATED
+    merchant_update_webhook:
+      type: object
+      properties:
+        entityType:
+          type: string
+        updatedObjects:
+          type: array
+          items:
+            type: object
+      example:
+        entityType: AVAILABILITY
+        updatedObjects:
+          - {}
+    register_update_merchant_endpoint_info:
+      type: object
+      properties:
+        getMerchantURL:
+          type: object
+          properties:
+            baseURL:
+              type: string
+            apiKey:
+              type: string
+        ordersWebhookURL:
+          type: string
+        orderingAppMerchantId:
+          type: string
+      example:
+        getMerchantURL:
+          baseURL: https://cardapioqrcode.pedizap.com.br
+          apiKey: 72f66d1e25e5e5a5d04035cdb7e87e19
+        ordersWebhookURL: https://cardapioqrcode.pedizap.com.br/opendelivery/v1/newEvent
+        orderingAppMerchantId: '{{merchant_id}}'
+    confirm:
+      type: object
+      properties:
+        reason:
+          type: string
+        createdAt:
+          type: string
+        orderExternalCode:
+          type: string
+        preparationTime:
+          type: integer
+      example:
+        reason: string
+        createdAt: '2026-06-03T16:34:41.300Z'
+        orderExternalCode: '{{order_id}}'
+        preparationTime: 0
+    deny_order_cancellation:
+      type: object
+      properties:
+        reason:
+          type: string
+        code:
+          type: string
+      example:
+        reason: Motivo
+        code: DISH_ALREADY_DONE
+    dispatch:
+      type: object
+      properties:
+        deliveryTrackingInfo:
+          type: object
+      example:
+        deliveryTrackingInfo: {}
+    patch_order_details:
+      type: object
+      properties:
+        preparationStartDateTime:
+          type: string
+      example:
+        preparationStartDateTime: '2026-07-17T15:23:13.000Z'
+    request_order_cancellation:
+      type: object
+      properties:
+        reason:
+          type: string
+        code:
+          type: string
+        mode:
+          type: string
+        outOfStockItems:
+          type: array
+          items:
+            type: string
+        invalidItems:
+          type: array
+          items:
+            type: string
+      example:
+        reason: Reason
+        code: DUPLICATE_APPLICATION
+        mode: AUTO
+        outOfStockItems: []
+        invalidItems: []
+    tracking:
+      type: object
+      properties:
+        deliveryTrackingInfo:
+          type: object
+      example:
+        deliveryTrackingInfo: {}
+    delivery_code_webhook:
+      type: object
+      properties:
+        orderId:
+          type: string
+        deliveryCode:
+          type: string
+      example:
+        orderId: 6cc158a0-115b-4ed7-8c50-68971825d29e
+        deliveryCode: '1234'
+    new_order_event_notification_webhook:
+      type: object
+      properties:
+        eventId:
+          type: string
+        eventType:
+          type: string
+        orderId:
+          type: string
+        orderURL:
+          type: string
+        createdAt:
+          type: string
+      example:
+        eventId: ad0fcc48-abba-4491-a017-94f5a145c281
+        eventType: CREATED
+        orderId: a9c93a8c-1b16-4960-b2f6-908aff3d3f2d
+        orderURL: >-
+          https://cardapio.pedizap.com.br/opendelivery/v1/orders/a9c93a8c-1b16-4960-b2f6-908aff3d3f2d
+        createdAt: '2026-07-16T15:22:02.000Z'
+    tracking_event_webhook:
+      type: object
+      properties:
+        orderId:
+          type: string
+        externalTrackingURL:
+          type: string
+        customerName:
+          type: string
+        event:
+          type: object
+          properties:
+            type:
+              type: string
+        vehicle:
+          type: object
+          properties:
+            type:
+              type: string
+        deliveryPerson:
+          type: object
+          properties:
+            name:
+              type: string
+            phone:
+              type: string
+      example:
+        orderId: 6cc158a0-115b-4ed7-8c50-68971825d29e
+        externalTrackingURL: https://tracking.example.com/6cc158a0
+        customerName: Fulano da Silva
+        event:
+          type: PICKUP_ONGOING
+        vehicle:
+          type: MOTORCYCLE
+        deliveryPerson:
+          name: Ciclano
+          phone: '14991618018'
+  requestBodies:
+    get_access_token:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            $ref: '#/components/schemas/get_access_token'
+      description: ''
+      required: true
+    acknowledge_events:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/acknowledge_events'
+      description: ''
+      required: true
+    merchant_update_webhook:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/merchant_update_webhook'
+      description: ''
+      required: true
+    register_update_merchant_endpoint_info:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/register_update_merchant_endpoint_info'
+      description: ''
+      required: true
+    confirm:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/confirm'
+      description: ''
+      required: true
+    deny_order_cancellation:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/deny_order_cancellation'
+      description: ''
+      required: true
+    dispatch:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/dispatch'
+      description: ''
+      required: true
+    patch_order_details:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/patch_order_details'
+      description: ''
+      required: true
+    request_order_cancellation:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/request_order_cancellation'
+      description: ''
+      required: true
+    tracking:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tracking'
+      description: ''
+      required: true
+    delivery_code_webhook:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/delivery_code_webhook'
+      description: ''
+      required: true
+    new_order_event_notification_webhook:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/new_order_event_notification_webhook'
+      description: ''
+      required: true
+    tracking_event_webhook:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tracking_event_webhook'
+      description: ''
+      required: true
+  securitySchemes:
+    acknowledge_events:
+      type: http
+      scheme: bearer
+    get_new_events:
+      type: http
+      scheme: bearer
+    check_merchant_update_processing_result:
+      type: http
+      scheme: bearer
+    get_merchant_status_and_service_hours:
+      type: http
+      scheme: bearer
+    merchant_update_webhook:
+      type: http
+      scheme: bearer
+    register_update_merchant_endpoint_info:
+      type: http
+      scheme: bearer
+    accept_order_cancellation:
+      type: http
+      scheme: bearer
+    confirm:
+      type: http
+      scheme: bearer
+    delivered_optional:
+      type: http
+      scheme: bearer
+    deny_order_cancellation:
+      type: http
+      scheme: bearer
+    dispatch:
+      type: http
+      scheme: bearer
+    get_order_details:
+      type: http
+      scheme: bearer
+    patch_order_details:
+      type: http
+      scheme: bearer
+    picked_up_optional:
+      type: http
+      scheme: bearer
+    preparing_optional:
+      type: http
+      scheme: bearer
+    ready_for_pickup:
+      type: http
+      scheme: bearer
+    request_order_cancellation:
+      type: http
+      scheme: bearer
+    tracking:
+      type: http
+      scheme: bearer
+    validate_delivery_code:
+      type: http
+      scheme: bearer

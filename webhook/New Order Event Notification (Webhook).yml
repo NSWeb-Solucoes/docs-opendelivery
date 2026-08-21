@@ -1,0 +1,198 @@
+info:
+  name: New Order Event Notification (Webhook)
+  type: http
+  seq: 1
+  tags:
+    - webhook
+
+http:
+  method: POST
+  url: "{{baseUrl}}/v1/newEvent"
+  headers:
+    - name: X-App-Id
+      value: ""
+      description: Unique identifier of the **Ordering Application** sending the webhook.
+    - name: X-App-MerchantId
+      value: ""
+      description: Unique identifier of the Merchant.
+    - name: X-App-Signature
+      value: ""
+      description: "HMAC-SHA256 signature of the request body, using the client secret as the key. Accepted as an alternative to a bearer token (`Authorization: Bearer`)."
+      disabled: true
+  body:
+    type: json
+    data: |-
+      {
+        "eventId": "ad0fcc48-abba-4491-a017-94f5a145c281",
+        "eventType": "CREATED",
+        "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+        "orderURL": "https://cardapio.pedizap.com.br/opendelivery/v1/orders/a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+        "createdAt": "2026-07-16T15:22:02.000Z"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("status code is a documented response", function () {
+          expect([200, 400, 401]).to.include(res.getStatus());
+        });
+
+        if (res.getStatus() === 200) {
+          test("200: acknowledges new order event webhook", function () {
+            expect(res.getHeader('content-type')).to.include('application/json');
+            const body = res.getBody();
+            expect(body).to.be.an('object');
+            expect(body).to.have.property('status').that.is.a('string');
+            expect(body).to.have.property('title').that.is.a('string');
+          });
+        }
+
+        if (res.getStatus() === 400) {
+          test("400: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 400);
+          });
+        }
+
+        if (res.getStatus() === 401) {
+          test("401: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 401);
+          });
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 200 Response
+    description: OK
+    request:
+      url: "{{baseUrl}}/v1/newEvent"
+      method: POST
+      headers:
+        - name: X-App-Id
+          value: ""
+          description: Unique identifier of the **Ordering Application** sending the webhook.
+        - name: X-App-MerchantId
+          value: ""
+          description: Unique identifier of the Merchant.
+        - name: X-App-Signature
+          value: ""
+          description: "HMAC-SHA256 signature of the request body, using the client secret as the key. Accepted as an alternative to a bearer token (`Authorization: Bearer`)."
+          disabled: true
+      body:
+        type: json
+        data: |-
+          {
+            "eventId": "ad0fcc48-abba-4491-a017-94f5a145c281",
+            "eventType": "CREATED",
+            "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+            "orderURL": "https://cardapio.pedizap.com.br/opendelivery/v1/orders/a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+            "createdAt": "2026-07-16T15:22:02.000Z"
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": "200",
+            "title": "Evento processado com sucesso"
+          }
+  - name: 400 Response
+    description: Bad Request
+    request:
+      url: "{{baseUrl}}/v1/newEvent"
+      method: POST
+      headers:
+        - name: X-App-Id
+          value: ""
+          description: Unique identifier of the **Ordering Application** sending the webhook.
+        - name: X-App-MerchantId
+          value: ""
+          description: Unique identifier of the Merchant.
+        - name: X-App-Signature
+          value: ""
+          description: "HMAC-SHA256 signature of the request body, using the client secret as the key. Accepted as an alternative to a bearer token (`Authorization: Bearer`)."
+          disabled: true
+      body:
+        type: json
+        data: |-
+          {
+            "eventId": "ad0fcc48-abba-4491-a017-94f5a145c281",
+            "eventType": "CREATED",
+            "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+            "orderURL": "https://cardapio.pedizap.com.br/opendelivery/v1/orders/a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+            "createdAt": "2026-07-16T15:22:02.000Z"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Evento sem orderId.","status":400}'
+  - name: 401 Response
+    description: Unauthorized
+    request:
+      url: "{{baseUrl}}/v1/newEvent"
+      method: POST
+      headers:
+        - name: X-App-Id
+          value: ""
+          description: Unique identifier of the **Ordering Application** sending the webhook.
+        - name: X-App-MerchantId
+          value: ""
+          description: Unique identifier of the Merchant.
+        - name: X-App-Signature
+          value: ""
+          description: "HMAC-SHA256 signature of the request body, using the client secret as the key. Accepted as an alternative to a bearer token (`Authorization: Bearer`)."
+          disabled: true
+      body:
+        type: json
+        data: |-
+          {
+            "eventId": "ad0fcc48-abba-4491-a017-94f5a145c281",
+            "eventType": "CREATED",
+            "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+            "orderURL": "https://cardapio.pedizap.com.br/opendelivery/v1/orders/a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+            "createdAt": "2026-07-16T15:22:02.000Z"
+          }
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Unauthorized","status":401}'
+
+docs: |-
+  Webhook alternative to [GET /v1/events](#operation/users_macuser_work_open_delivery_api_orders_events_get_new_events_yml) polling: sent by the **Ordering Application** to notify this **Software Service** that a new order event has happened, avoiding the need to poll.
+
+  > **Acknowledgment does NOT apply for webhooks.**
+
+  <br /><br />
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">HOST:</span> **SOFTWARE SERVICE**
+
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">DIRECTION:</span>
+  <div align="center">
+    <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTOA_SS.png" />
+  </div>

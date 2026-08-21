@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Node (caso use npx serve ou tooling local)
+node_modules/
+npm-debug.log*
+
+# Bruno
+.bruno/
+*.bru.lock
+
+# Ambientes/segredos locais
+.env
+.env.local
+environments/*.local.yml

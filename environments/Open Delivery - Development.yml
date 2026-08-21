@@ -1,0 +1,4 @@
+name: Open Delivery
+variables:
+  - name: baseUrl
+    value: https://domain.pedizap.develop/opendelivery

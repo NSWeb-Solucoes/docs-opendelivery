@@ -1,0 +1,389 @@
+info:
+  name: Get New Events
+  type: http
+  seq: 2
+  tags:
+    - events
+
+http:
+  method: GET
+  url: "{{baseUrl}}/v1/events"
+  headers:
+    - name: x-polling-merchants
+      value: 22815773000169-dbc7e35a-c936-4665-9e13-eb55eb8b6824
+  params:
+    - name: eventType
+      value: CREATED
+      type: query
+      disabled: true
+    - name: eventType
+      value: CONFIRMED
+      type: query
+      disabled: true
+    - name: eventType
+      value: PREPARATION_REQUESTED
+      type: query
+      disabled: true
+    - name: eventType
+      value: PREPARING
+      type: query
+      disabled: true
+    - name: eventType
+      value: DISPATCHED
+      type: query
+      disabled: true
+    - name: eventType
+      value: READY_FOR_PICKUP
+      type: query
+      disabled: true
+    - name: eventType
+      value: PICKUP_AREA_ASSIGNED
+      type: query
+      disabled: true
+    - name: eventType
+      value: PICKED_UP
+      type: query
+      disabled: true
+    - name: eventType
+      value: DELIVERED
+      type: query
+      disabled: true
+    - name: eventType
+      value: CONCLUDED
+      type: query
+      disabled: true
+    - name: eventType
+      value: CANCELLATION_REQUESTED
+      type: query
+      disabled: true
+    - name: eventType
+      value: CANCELLATION_REQUEST_DENIED
+      type: query
+      disabled: true
+    - name: eventType
+      value: CANCELLED
+      type: query
+      disabled: true
+    - name: eventType
+      value: ORDER_CANCELLATION_REQUEST
+      type: query
+      disabled: true
+    - name: eventType
+      value: CANCELLED_DENIED
+      type: query
+      disabled: true
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("status code is a documented response", function () {
+          expect([200, 204, 401]).to.include(res.getStatus());
+        });
+
+        if (res.getStatus() === 200) {
+          test("200: returns pending events", function () {
+            expect(res.getHeader('content-type')).to.include('application/json');
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+            if (body.length > 0) {
+              const item = body[0];
+              expect(item).to.have.property('eventId').that.is.a('string');
+              expect(item).to.have.property('eventType').that.is.a('string');
+              expect(item).to.have.property('orderId').that.is.a('string');
+              expect(item).to.have.property('orderURL').that.is.a('string');
+              expect(item).to.have.property('createdAt').that.is.a('string');
+              expect(item).to.have.property('sourceAppId').that.is.a('string');
+            }
+          });
+        }
+
+        if (res.getStatus() === 204) {
+          test("204: no new events available", function () {
+            const body = res.getBody();
+            expect(body === undefined || body === null || body === '').to.be.true;
+          });
+        }
+
+        if (res.getStatus() === 401) {
+          test("401: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 401);
+          });
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 200 Response
+    description: OK
+    request:
+      url: "{{baseUrl}}/v1/events"
+      method: GET
+      headers:
+        - name: x-polling-merchants
+          value: 22815773000169-dbc7e35a-c936-4665-9e13-eb55eb8b6824
+      params:
+        - name: eventType
+          value: CREATED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CONFIRMED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PREPARATION_REQUESTED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PREPARING
+          type: query
+          disabled: true
+        - name: eventType
+          value: DISPATCHED
+          type: query
+          disabled: true
+        - name: eventType
+          value: READY_FOR_PICKUP
+          type: query
+          disabled: true
+        - name: eventType
+          value: PICKUP_AREA_ASSIGNED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PICKED_UP
+          type: query
+          disabled: true
+        - name: eventType
+          value: DELIVERED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CONCLUDED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLATION_REQUESTED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLATION_REQUEST_DENIED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLED
+          type: query
+          disabled: true
+        - name: eventType
+          value: ORDER_CANCELLATION_REQUEST
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLED_DENIED
+          type: query
+          disabled: true
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          [
+            {
+              "eventId": "ad0fcc48-abba-4491-a017-94f5a145c281",
+              "eventType": "CREATED",
+              "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+              "orderURL": "https://cardapio.pedizap.com.br/opendelivery/v1/orders/a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+              "createdAt": "2026-07-16T15:22:02.000Z",
+              "sourceAppId": "123e4567-e89b-412d-a456-426614174000",
+              "virtualBrand": "pedizap-5095"
+            },
+            {
+              "eventId": "88f0597a-87a0-41c8-810d-5efbe2acd198",
+              "eventType": "CREATED",
+              "orderId": "6cc158a0-115b-4ed7-8c50-68971825d29e",
+              "orderURL": "https://cardapio.pedizap.com.br/opendelivery/v1/orders/6cc158a0-115b-4ed7-8c50-68971825d29e",
+              "createdAt": "2026-07-16T15:23:13.000Z",
+              "sourceAppId": "123e4567-e89b-412d-a456-426614174000",
+              "virtualBrand": "pedizap-5095"
+            }
+          ]
+  - name: 204 Response
+    description: No Content
+    request:
+      url: "{{baseUrl}}/v1/events"
+      method: GET
+      headers:
+        - name: x-polling-merchants
+          value: 22815773000169-dbc7e35a-c936-4665-9e13-eb55eb8b6824
+      params:
+        - name: eventType
+          value: CREATED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CONFIRMED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PREPARATION_REQUESTED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PREPARING
+          type: query
+          disabled: true
+        - name: eventType
+          value: DISPATCHED
+          type: query
+          disabled: true
+        - name: eventType
+          value: READY_FOR_PICKUP
+          type: query
+          disabled: true
+        - name: eventType
+          value: PICKUP_AREA_ASSIGNED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PICKED_UP
+          type: query
+          disabled: true
+        - name: eventType
+          value: DELIVERED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CONCLUDED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLATION_REQUESTED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLATION_REQUEST_DENIED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLED
+          type: query
+          disabled: true
+        - name: eventType
+          value: ORDER_CANCELLATION_REQUEST
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLED_DENIED
+          type: query
+          disabled: true
+    response:
+      status: 204
+      statusText: No Content
+      body:
+        type: text
+        data: ""
+  - name: 401 Response
+    description: Unauthorized
+    request:
+      url: "{{baseUrl}}/v1/events"
+      method: GET
+      headers:
+        - name: x-polling-merchants
+          value: 22815773000169-dbc7e35a-c936-4665-9e13-eb55eb8b6824
+      params:
+        - name: eventType
+          value: CREATED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CONFIRMED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PREPARATION_REQUESTED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PREPARING
+          type: query
+          disabled: true
+        - name: eventType
+          value: DISPATCHED
+          type: query
+          disabled: true
+        - name: eventType
+          value: READY_FOR_PICKUP
+          type: query
+          disabled: true
+        - name: eventType
+          value: PICKUP_AREA_ASSIGNED
+          type: query
+          disabled: true
+        - name: eventType
+          value: PICKED_UP
+          type: query
+          disabled: true
+        - name: eventType
+          value: DELIVERED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CONCLUDED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLATION_REQUESTED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLATION_REQUEST_DENIED
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLED
+          type: query
+          disabled: true
+        - name: eventType
+          value: ORDER_CANCELLATION_REQUEST
+          type: query
+          disabled: true
+        - name: eventType
+          value: CANCELLED_DENIED
+          type: query
+          disabled: true
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Unauthorized","status":401}'
+
+docs: |-
+  Polls events for any orders from merchants associated with the authenticated user.  
+  Each event received from this endpoint must be properly acknowledged, otherwise it will continue to be returned on further requests.
+
+  <br /><br />
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">DIRECTION:</span>
+  <div align="center">
+    <img src="https://abrasel-nacional.github.io/opendelivery/images/directionGETSS_OA.png" />
+  </div>

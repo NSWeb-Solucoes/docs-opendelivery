@@ -1,0 +1,143 @@
+info:
+  name: Acknowledge Events
+  type: http
+  seq: 1
+  tags:
+    - events
+
+http:
+  method: POST
+  url: "{{baseUrl}}/v1/events/acknowledgment"
+  body:
+    type: json
+    data: |-
+      [
+        {
+          "id": "ad0fcc48-abba-4491-a017-94f5a145c281",
+          "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+          "eventType": "CREATED"
+        }
+      ]
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("status code is a documented response", function () {
+          expect([202, 400, 401]).to.include(res.getStatus());
+        });
+
+        if (res.getStatus() === 202) {
+          test("202: accepts event acknowledgment with no content", function () {
+            const body = res.getBody();
+            expect(body === undefined || body === null || body === '').to.be.true;
+          });
+        }
+
+        if (res.getStatus() === 400) {
+          test("400: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 400);
+          });
+        }
+
+        if (res.getStatus() === 401) {
+          test("401: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 401);
+          });
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 202 Response
+    description: Accepted
+    request:
+      url: "{{baseUrl}}/v1/events/acknowledgment"
+      method: POST
+      body:
+        type: json
+        data: |-
+          [
+            {
+              "id": "ad0fcc48-abba-4491-a017-94f5a145c281",
+              "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+              "eventType": "CREATED"
+            }
+          ]
+    response:
+      status: 202
+      statusText: Accepted
+      body:
+        type: text
+        data: ""
+  - name: 400 Response
+    description: Bad Request
+    request:
+      url: "{{baseUrl}}/v1/events/acknowledgment"
+      method: POST
+      body:
+        type: json
+        data: |-
+          [
+            {
+              "id": "ad0fcc48-abba-4491-a017-94f5a145c281",
+              "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+              "eventType": "CREATED"
+            }
+          ]
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Payload inv\u00e1lido","status":400}'
+  - name: 401 Response
+    description: Unauthorized
+    request:
+      url: "{{baseUrl}}/v1/events/acknowledgment"
+      method: POST
+      body:
+        type: json
+        data: |-
+          [
+            {
+              "id": "ad0fcc48-abba-4491-a017-94f5a145c281",
+              "orderId": "a9c93a8c-1b16-4960-b2f6-908aff3d3f2d",
+              "eventType": "CREATED"
+            }
+          ]
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Unauthorized","status":401}'
+
+docs: |-
+  Acknowledge a set of events, dismissing them from future polling calls.
+  <br /><br />
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">DIRECTION:</span>
+  <div align="center">
+    <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+  </div>

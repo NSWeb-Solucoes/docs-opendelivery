@@ -1,0 +1,154 @@
+info:
+  name: Get Access Token
+  type: http
+  seq: 1
+  tags:
+    - authentication
+
+http:
+  method: POST
+  url: "{{baseUrl}}/oauth/token"
+  body:
+    type: form-urlencoded
+    data:
+      - name: client_id
+        value: ""
+      - name: client_secret
+        value: ""
+      - name: grant_type
+        value: ""
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.getStatus() === 200) {
+          bru.setVar("token", res.getBody().access_token);
+        }
+    - type: tests
+      code: |-
+        test("status code is a documented response", function () {
+          expect([200, 400, 401]).to.include(res.getStatus());
+        });
+
+        if (res.getStatus() === 200) {
+          test("200: returns access token payload", function () {
+            expect(res.getHeader('content-type')).to.include('application/json');
+            const body = res.getBody();
+            expect(body).to.be.an('object');
+            expect(body).to.have.property('access_token').that.is.a('string');
+            expect(body).to.have.property('token_type', 'bearer');
+            expect(body).to.have.property('expires_in').that.is.a('number');
+          });
+        }
+
+        if (res.getStatus() === 400) {
+          test("400: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 400);
+          });
+        }
+
+        if (res.getStatus() === 401) {
+          test("401: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 401);
+          });
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 200 Response
+    description: OK
+    request:
+      url: "{{baseUrl}}/oauth/token"
+      method: POST
+      body:
+        type: form-urlencoded
+        data:
+          - name: client_id
+            value: ""
+          - name: client_secret
+            value: ""
+          - name: grant_type
+            value: ""
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NhcmRhcGlvLnBlZGl6YXAuY29tLmJyIiwiYXVkIjoiaHR0cHM6Ly9jYXJkYXBpby5wZWRpemFwLmNvbS5iciIsImp0aSI6IjY2ZGFlNWI1YTZhYzhjYzJkZTFiM2ViMmQ3YmY5MjdhIiwiaWF0IjoxNzg0MjI1MzQ4LjU5NDE2NywibmJmIjoxNzg0MjI1MzQ4LjU5NDE2NywiZXhwIjoxNzg0MjQ2OTQ4LjU5NDE2Nywic2NvcGUiOiJ3cy5hbGwiLCJ0eXAiOiJ3c19jbGllbnQiLCJjbGllbnRfaWQiOiI0YTk0ODM2Ny02ZWIwLTQwZGQtYWJmOS03YTI4Y2ZkNjBiOGEifQ.UNVBuw-AqyE5HQ2cz9sMhWUmKxst11rzsdrYameRkVg",
+            "token_type": "bearer",
+            "expires_in": 21600
+          }
+  - name: 400 Response
+    description: Bad Request
+    request:
+      url: "{{baseUrl}}/oauth/token"
+      method: POST
+      body:
+        type: form-urlencoded
+        data:
+          - name: client_id
+            value: ""
+          - name: client_secret
+            value: ""
+          - name: grant_type
+            value: ""
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"grant_type invalido","status":400}'
+  - name: 401 Response
+    description: Unauthorized
+    request:
+      url: "{{baseUrl}}/oauth/token"
+      method: POST
+      body:
+        type: form-urlencoded
+        data:
+          - name: client_id
+            value: ""
+          - name: client_secret
+            value: ""
+          - name: grant_type
+            value: ""
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Credenciais invalidas","status":401}'
+
+docs: |-
+  Requests new access token for accessing **Ordering Application** API resources.
+  <br /><br />
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">DIRECTION:</span>
+  <div align="center">
+    <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+  </div>

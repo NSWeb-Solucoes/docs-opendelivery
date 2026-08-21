@@ -1,0 +1,209 @@
+info:
+  name: Tracking
+  type: http
+  seq: 4
+  tags:
+    - orders
+
+http:
+  method: POST
+  url: "{{baseUrl}}/v1/orders/:orderId/tracking"
+  params:
+    - name: orderId
+      value: "{{order_id}}"
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "deliveryTrackingInfo": {}
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("status code is a documented response", function () {
+          expect([202, 400, 401, 404, 422]).to.include(res.getStatus());
+        });
+
+        if (res.getStatus() === 202) {
+          test("202: accepts tracking update with no content", function () {
+            const body = res.getBody();
+            expect(body === undefined || body === null || body === '').to.be.true;
+          });
+        }
+
+        if (res.getStatus() === 400) {
+          test("400: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 400);
+          });
+        }
+
+        if (res.getStatus() === 401) {
+          test("401: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 401);
+          });
+        }
+
+        if (res.getStatus() === 404) {
+          test("404: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 404);
+          });
+        }
+
+        if (res.getStatus() === 422) {
+          test("422: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 422);
+          });
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 202 Response
+    description: Accepted
+    request:
+      url: "{{baseUrl}}/v1/orders/:orderId/tracking"
+      method: POST
+      params:
+        - name: orderId
+          value: "{{order_id}}"
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "deliveryTrackingInfo": {}
+          }
+    response:
+      status: 202
+      statusText: Accepted
+      body:
+        type: text
+        data: ""
+  - name: 400 Response
+    description: Bad Request
+    request:
+      url: "{{baseUrl}}/v1/orders/:orderId/tracking"
+      method: POST
+      params:
+        - name: orderId
+          value: "{{order_id}}"
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "deliveryTrackingInfo": {}
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Payload inválido","status":400}'
+  - name: 401 Response
+    description: Unauthorized
+    request:
+      url: "{{baseUrl}}/v1/orders/:orderId/tracking"
+      method: POST
+      params:
+        - name: orderId
+          value: "{{order_id}}"
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "deliveryTrackingInfo": {}
+          }
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Unauthorized","status":401}'
+  - name: 404 Response
+    description: Not Found
+    request:
+      url: "{{baseUrl}}/v1/orders/:orderId/tracking"
+      method: POST
+      params:
+        - name: orderId
+          value: "{{order_id}}"
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "deliveryTrackingInfo": {}
+          }
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Pedido não encontrado","status":404}'
+  - name: 422 Response
+    description: Unprocessable Entity
+    request:
+      url: "{{baseUrl}}/v1/orders/:orderId/tracking"
+      method: POST
+      params:
+        - name: orderId
+          value: "{{order_id}}"
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "deliveryTrackingInfo": {}
+          }
+    response:
+      status: 422
+      statusText: Unprocessable Entity
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Pedido não disponível nesta integração","status":422}'
+
+docs: |-
+  Sends delivery tracking information updates for the order while it is out for delivery.
+  <br /><br />
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">DIRECTION:</span>
+  <div align="center">
+    <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPOSTSS_OA.png" />
+  </div>

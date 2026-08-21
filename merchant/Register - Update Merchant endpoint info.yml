@@ -1,0 +1,163 @@
+info:
+  name: Register / Update Merchant endpoint info.
+  type: http
+  seq: 5
+  tags:
+    - merchant
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/v1/merchantOnboarding?merchantId=:{merchant_id}"
+  params:
+    - name: merchantId
+      value: "{{merchant_id}}"
+      type: query
+  body:
+    type: json
+    data: |-
+      {
+        "getMerchantURL": {
+          "baseURL": "https://cardapioqrcode.pedizap.com.br",
+          "apiKey": "72f66d1e25e5e5a5d04035cdb7e87e19"
+        },
+        "ordersWebhookURL": "https://cardapioqrcode.pedizap.com.br/opendelivery/v1/newEvent",
+        "orderingAppMerchantId": "{{merchant_id}}"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("status code is a documented response", function () {
+          expect([204, 400, 401]).to.include(res.getStatus());
+        });
+
+        if (res.getStatus() === 204) {
+          test("204: accepts merchant onboarding with no content", function () {
+            const body = res.getBody();
+            expect(body === undefined || body === null || body === '').to.be.true;
+          });
+        }
+
+        if (res.getStatus() === 400) {
+          test("400: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 400);
+          });
+        }
+
+        if (res.getStatus() === 401) {
+          test("401: returns problem+json error", function () {
+            expect(res.getHeader('content-type')).to.include('application/problem+json');
+            const body = res.getBody();
+            expect(body).to.have.property('title').that.is.a('string');
+            expect(body).to.have.property('status', 401);
+          });
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 204 Response
+    description: No Content
+    request:
+      url: "{{baseUrl}}/v1/merchantOnboarding?merchantId=:{merchant_id}"
+      method: PUT
+      params:
+        - name: merchantId
+          value: "{{merchant_id}}"
+          type: query
+      body:
+        type: json
+        data: |-
+          {
+            "getMerchantURL": {
+              "baseURL": "https://cardapioqrcode.pedizap.com.br",
+              "apiKey": "72f66d1e25e5e5a5d04035cdb7e87e19"
+            },
+            "ordersWebhookURL": "https://cardapioqrcode.pedizap.com.br/opendelivery/v1/newEvent",
+            "orderingAppMerchantId": "{{merchant_id}}"
+          }
+    response:
+      status: 204
+      statusText: No Content
+      body:
+        type: text
+        data: ""
+  - name: 400 Response
+    description: Bad Request
+    request:
+      url: "{{baseUrl}}/v1/merchantOnboarding?merchantId=:{merchant_id}"
+      method: PUT
+      params:
+        - name: merchantId
+          value: "{{merchant_id}}"
+          type: query
+      body:
+        type: json
+        data: |-
+          {
+            "getMerchantURL": {
+              "baseURL": "https://cardapioqrcode.pedizap.com.br",
+              "apiKey": "72f66d1e25e5e5a5d04035cdb7e87e19"
+            },
+            "ordersWebhookURL": "https://cardapioqrcode.pedizap.com.br/opendelivery/v1/newEvent",
+            "orderingAppMerchantId": "{{merchant_id}}"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Payload inv\u00e1lido","status":400}'
+  - name: 401 Response
+    description: Unauthorized
+    request:
+      url: "{{baseUrl}}/v1/merchantOnboarding?merchantId=:{merchant_id}"
+      method: PUT
+      params:
+        - name: merchantId
+          value: "{{merchant_id}}"
+          type: query
+      body:
+        type: json
+        data: |-
+          {
+            "getMerchantURL": {
+              "baseURL": "https://cardapioqrcode.pedizap.com.br",
+              "apiKey": "72f66d1e25e5e5a5d04035cdb7e87e19"
+            },
+            "ordersWebhookURL": "https://cardapioqrcode.pedizap.com.br/opendelivery/v1/newEvent",
+            "orderingAppMerchantId": "{{merchant_id}}"
+          }
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/problem+json
+      body:
+        type: json
+        data: '{"title":"Unauthorized","status":401}'
+
+docs: |-
+  Register and update the **Merchant** endpoint [GET /v1/merchant](#operation/getMerchant) information in the **Ordering Application**.
+  <br /><br />
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">HOST:</span> **ORDERING APPLICATION**
+
+  <span style="text-decoration:underline; color:#26323880; font-size:13.006px">DIRECTION:</span>
+  <div align="center">
+    <img src="https://abrasel-nacional.github.io/opendelivery/images/directionPUTSS_OA.png" />
+  </div>
